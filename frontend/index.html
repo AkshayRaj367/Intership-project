@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechFlow - Revolutionary Productivity Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .glass-effect { 
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .hover-scale { transition: transform 0.3s ease; }
+        .hover-scale:hover { transform: scale(1.05); }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect text-white">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-rocket text-2xl"></i>
+                    <span class="text-xl font-bold">TechFlow</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#home" class="hover:text-purple-200 transition">Home</a>
+                    <a href="#features" class="hover:text-purple-200 transition">Features</a>
+                    <a href="#contact" class="hover:text-purple-200 transition">Contact</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-purple-700 bg-opacity-95">
+            <div class="px-6 py-4 space-y-3">
+                <a href="#home" class="block hover:text-purple-200 transition">Home</a>
+                <a href="#features" class="block hover:text-purple-200 transition">Features</a>
+                <a href="#contact" class="block hover:text-purple-200 transition">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg min-h-screen flex items-center pt-20">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                        Transform Your Workflow with <span class="text-yellow-300">TechFlow</span>
+                    </h1>
+                    <p class="text-xl mb-8 text-purple-100">
+                        Experience the future of productivity with our revolutionary platform that seamlessly integrates AI-powered automation with intuitive design.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="bg-yellow-400 text-purple-900 px-8 py-4 rounded-full font-semibold hover-scale hover:bg-yellow-300 transition">
+                            <i class="fas fa-play mr-2"></i> Start Free Trial
+                        </button>
+                        <button class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-700 transition">
+                            <i class="fas fa-video mr-2"></i> Watch Demo
+                        </button>
+                    </div>
+                    <div class="mt-8 flex items-center space-x-8 relative z-10">
+                        <div>
+                            <div class="text-3xl font-bold text-yellow-300">10K+</div>
+                            <div class="text-purple-200">Active Users</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-yellow-300">99.9%</div>
+                            <div class="text-purple-200">Uptime</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-yellow-300">24/7</div>
+                            <div class="text-purple-200">Support</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="animate-float">
+                        <div class="bg-white bg-opacity-10 rounded-3xl p-8 glass-effect">
+                            <div class="bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl h-64 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-white text-6xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 text-gray-800">Powerful Features</h2>
+                <p class="text-xl text-gray-600">Everything you need to supercharge your productivity</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">AI-Powered Automation</h3>
+                    <p class="text-gray-600 mb-4">
+                        Let our intelligent AI handle repetitive tasks, learn your patterns, and suggest optimizations to boost your efficiency.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-check text-purple-500 mr-2"></i>Smart task scheduling</li>
+                        <li><i class="fas fa-check text-purple-500 mr-2"></i>Predictive analytics</li>
+                        <li><i class="fas fa-check text-purple-500 mr-2"></i>Automated workflows</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Team Collaboration</h3>
+                    <p class="text-gray-600 mb-4">
+                        Work seamlessly with your team in real-time, share resources, and communicate effectively within one unified platform.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-check text-blue-500 mr-2"></i>Real-time collaboration</li>
+                        <li><i class="fas fa-check text-blue-500 mr-2"></i>Shared workspaces</li>
+                        <li><i class="fas fa-check text-blue-500 mr-2"></i>Video conferencing</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Enterprise Security</h3>
+                    <p class="text-gray-600 mb-4">
+                        Bank-level encryption and compliance standards ensure your data remains secure and protected at all times.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>End-to-end encryption</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>GDPR compliant</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Regular security audits</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Additional Features -->
+            <div class="grid md:grid-cols-2 gap-8 mt-12">
+                <div class="flex items-start space-x-4">
+                    <div class="bg-purple-100 rounded-full p-3">
+                        <i class="fas fa-chart-bar text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold mb-2 text-gray-800">Advanced Analytics</h4>
+                        <p class="text-gray-600">Track performance, identify trends, and make data-driven decisions with comprehensive analytics dashboards.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="bg-blue-100 rounded-full p-3">
+                        <i class="fas fa-mobile-alt text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold mb-2 text-gray-800">Mobile First Design</h4>
+                        <p class="text-gray-600">Access your workspace from anywhere with our fully responsive mobile apps for iOS and Android.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold mb-4 text-gray-800">Get In Touch</h2>
+                    <p class="text-xl text-gray-600">Ready to transform your workflow? Let's talk about how TechFlow can help your team.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <form id="contactForm">
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-2" for="name">
+                                    <i class="fas fa-user mr-2"></i>Full Name
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    name="name" 
+                                    required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
+                                    placeholder="John Doe"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-2" for="email">
+                                    <i class="fas fa-envelope mr-2"></i>Email Address
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
+                                    placeholder="john@example.com"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-semibold mb-2" for="subject">
+                                <i class="fas fa-tag mr-2"></i>Subject
+                            </label>
+                            <select 
+                                id="subject" 
+                                name="subject"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition"
+                            >
+                                <option value="general">General Inquiry</option>
+                                <option value="demo">Request Demo</option>
+                                <option value="support">Technical Support</option>
+                                <option value="partnership">Partnership</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-semibold mb-2" for="message">
+                                <i class="fas fa-comment mr-2"></i>Message
+                            </label>
+                            <textarea 
+                                id="message" 
+                                name="message" 
+                                rows="5" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition resize-none"
+                                placeholder="Tell us about your needs and how we can help..."
+                            ></textarea>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="newsletter" name="newsletter" class="mr-2">
+                                <span class="text-gray-700">Send me updates about TechFlow features and offers</span>
+                            </label>
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition transform hover:scale-105"
+                        >
+                            <i class="fas fa-paper-plane mr-2"></i>Send Message
+                        </button>
+                    </form>
+                    
+                    <!-- Success/Error Messages -->
+                    <div id="formMessage" class="hidden mt-4 p-4 rounded-lg"></div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="grid md:grid-cols-3 gap-8 mt-12">
+                    <div class="text-center">
+                        <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-map-marker-alt text-purple-600 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2">Office Location</h4>
+                        <p class="text-gray-600">123 Tech Street<br>Silicon Valley, CA 94025</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-phone text-blue-600 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2">Phone</h4>
+                        <p class="text-gray-600">+1 (555) 123-4567<br>Mon-Fri 9AM-6PM PST</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-envelope text-green-600 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2">Email</h4>
+                        <p class="text-gray-600">hello@techflow.com<br>support@techflow.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-rocket text-2xl"></i>
+                        <span class="text-xl font-bold">TechFlow</span>
+                    </div>
+                    <p class="text-purple-200">Revolutionizing productivity with AI-powered automation and seamless collaboration.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-purple-200">
+                        <li><a href="#" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white transition">API</a></li>
+                        <li><a href="#" class="hover:text-white transition">Integrations</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-purple-200">
+                        <li><a href="#" class="hover:text-white transition">About</a></li>
+                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="bg-white bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-30 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="bg-white bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-30 transition">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="bg-white bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-30 transition">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="bg-white bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-30 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p class="text-purple-200">Stay updated with our latest features and releases.</p>
+                </div>
+            </div>
+            <div class="border-t border-purple-400 mt-8 pt-8 text-center text-purple-200">
+                <p>&copy; 2024 TechFlow. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+</html>
