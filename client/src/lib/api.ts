@@ -35,11 +35,12 @@ api.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Clear token and redirect to login
-      localStorage.removeItem('auth_token')
-      window.location.href = '/login'
-    }
+    // Temporarily disable automatic redirect to prevent infinite reload
+    // if (error.response?.status === 401) {
+    //   // Clear token and redirect to login
+    //   localStorage.removeItem('auth_token')
+    //   window.location.href = '/login'
+    // }
     return Promise.reject(error)
   }
 )

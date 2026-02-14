@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer'
 import Home from '@/pages/Home'
 import Dashboard from '@/pages/Dashboard'
 import Login from '@/pages/Login'
+import Register from '@/pages/Register'
 import { useAuthStore } from '@/contexts/AuthContext'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
@@ -24,13 +25,19 @@ function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route 
+            path="/login" 
+            element={
+              user ? <Home /> : <Login />
+            } 
+          />
           <Route 
             path="/dashboard" 
             element={
-              user ? <Dashboard /> : <Login />
-            } 
+              user ? <Home /> : <Login />
+            }
           />
-          <Route path="/login" element={<Login />} />
         </Routes>
       </main>
       <Footer />

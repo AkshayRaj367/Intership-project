@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/contexts/AuthContext'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Card from '@/components/ui/Card'
@@ -10,57 +10,83 @@ import Navbar from '@/components/layout/Footer'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const { login, checkAuth } = useAuthStore()
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData({
+      ...formData,
+      [name]: value
+    })
+  }
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    
+    // Basic validation
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match')
+      setIsLoading(false)
+      return
+    }
+    
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters')
+      setIsLoading(false)
+      return
+    }
+
     try {
-      // Simulate login API call
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      // Simulate registration API call
+      const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
-          password,
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
         }),
       })
 
       const result = await response.json()
 
       if (result.success) {
+        toast.success('Registration successful! Welcome!')
         // Store token and user data
         localStorage.setItem('auth_token', result.token)
-        toast.success('Login successful!')
         // Update authentication state
         await checkAuth()
-        window.location.href = '/'
+        setTimeout(() => {
+          window.location.href = '/'
+        }, 1500)
       } else {
-        toast.error(result.message || 'Login failed')
+        toast.error(result.message || 'Registration failed')
       }
     } catch (error) {
-      // For demo purposes, simulate successful login
-      toast.success('Login successful!')
+      // For demo purposes, simulate successful registration and auto-login
+      toast.success('Registration successful! Welcome!')
       localStorage.setItem('auth_token', 'demo-token')
       // Update authentication state for demo
       await checkAuth()
       setTimeout(() => {
         window.location.href = '/'
-      }, 1000)
+      }, 1500)
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const handleGoogleLogin = () => {
-    login()
   }
 
   return (
@@ -78,10 +104,10 @@ const Login: React.FC = () => {
             </div>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-[#202124]">
-            Sign in to your account
+            Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-[#5f6368]">
-            Welcome back! Please sign in to continue
+            Join TechFlow and start managing your contacts efficiently
           </p>
         </motion.div>
 
@@ -92,7 +118,26 @@ const Login: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <Card className="py-8 px-4 shadow-sm sm:rounded-lg sm:px-10">
-            <form className="space-y-6" onSubmit={handleEmailLogin}>
+            <form className="space-y-6" onSubmit={onSubmit}>
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-[#202124]">
+                  Full Name
+                </label>
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-[#5f6368]" />
+                  </div>
+                  <Input
+                    type="text"
+                    className="pl-10"
+                    placeholder="John Doe"
+                    value={formData.name}
+                    onChange={(value) => setFormData({...formData, name: value})}
+                    required
+                  />
+                </div>
+              </div>
+
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-[#202124]">
                   Email address
@@ -105,8 +150,9 @@ const Login: React.FC = () => {
                     type="email"
                     className="pl-10"
                     placeholder="john@example.com"
-                    value={email}
-                    onChange={(value) => setEmail(value)}
+                    value={formData.email}
+                    onChange={(value) => setFormData({...formData, email: value})}
+                    required
                   />
                 </div>
               </div>
@@ -123,8 +169,9 @@ const Login: React.FC = () => {
                     type={showPassword ? 'text' : 'password'}
                     className="pl-10 pr-10"
                     placeholder="••••••••"
-                    value={password}
-                    onChange={(value) => setPassword(value)}
+                    value={formData.password}
+                    onChange={(value) => setFormData({...formData, password: value})}
+                    required
                   />
                   <button
                     type="button"
@@ -140,23 +187,33 @@ const Login: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-[#1a73e8] focus:ring-[#1a73e8] border-gray-300 rounded"
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#202124]">
+                  Confirm Password
+                </label>
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-[#5f6368]" />
+                  </div>
+                  <Input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    className="pl-10 pr-10"
+                    placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={(value) => setFormData({...formData, confirmPassword: value})}
+                    required
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-[#5f6368]">
-                    Remember me
-                  </label>
-                </div>
-
-                <div className="text-sm">
-                  <a href="#" className="font-medium text-[#1a73e8] hover:text-[#1557b0]">
-                    Forgot your password?
-                  </a>
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5 text-[#5f6368]" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-[#5f6368]" />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -166,7 +223,7 @@ const Login: React.FC = () => {
                   className="w-full flex justify-center py-3 px-4"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
+                  {isLoading ? 'Creating account...' : 'Create account'}
                 </Button>
               </div>
             </form>
@@ -183,7 +240,7 @@ const Login: React.FC = () => {
 
               <div className="mt-6">
                 <Button
-                  onClick={handleGoogleLogin}
+                  onClick={() => login()}
                   className="w-full flex justify-center items-center space-x-2 py-3 px-4 bg-white border border-[#dadce0] text-[#3c4043] hover:bg-[#f8f9fa]"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -204,19 +261,19 @@ const Login: React.FC = () => {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  <span>Sign in with Google</span>
+                  <span>Sign up with Google</span>
                 </Button>
               </div>
             </div>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-[#5f6368]">
-                Don't have an account?{' '}
+                Already have an account?{' '}
                 <Link
-                  to="/register"
+                  to="/login"
                   className="font-medium text-[#1a73e8] hover:text-[#1557b0]"
                 >
-                  Sign up
+                  Sign in
                 </Link>
               </p>
             </div>
@@ -227,4 +284,4 @@ const Login: React.FC = () => {
   )
 }
 
-export default Login
+export default Register
