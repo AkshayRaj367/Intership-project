@@ -62,19 +62,19 @@ const Contact: React.FC = () => {
     {
       icon: Mail,
       title: 'Email',
-      content: 'hello@techflow.com',
+      content: 'akshay.raj.p.367@gmail.com',
       description: 'Send us an email anytime',
     },
     {
       icon: Phone,
       title: 'Phone',
-      content: '+1 (555) 123-4567',
+      content: '+91 7780275789',
       description: 'Mon-Fri from 8am to 6pm',
     },
     {
       icon: MapPin,
       title: 'Office',
-      content: 'San Francisco, CA',
+      content: 'Top Secret Location',
       description: 'Come say hello at our office',
     },
   ]
