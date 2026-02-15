@@ -3,34 +3,48 @@ import { logger } from '@/utils/logger';
 import { IEmailOptions } from '@/types';
 
 class EmailService {
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
+  private enabled: boolean = false;
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_APP_PASS;
 
-    // Verify connection on initialization
-    this.verifyConnection();
+    // Only initialize if real credentials are provided
+    if (emailUser && emailPass && !emailUser.includes('your-email') && !emailPass.includes('your_')) {
+      this.transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: emailUser,
+          pass: emailPass,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+      this.enabled = true;
+      this.verifyConnection();
+    } else {
+      logger.info('📧 Email service disabled — no credentials configured');
+    }
   }
 
   private async verifyConnection(): Promise<void> {
+    if (!this.transporter) return;
     try {
       await this.transporter.verify();
       logger.info('✅ Email service connected successfully');
     } catch (error) {
       logger.error('❌ Email service connection failed:', error);
+      this.enabled = false;
     }
   }
 
   async sendEmail(options: IEmailOptions): Promise<boolean> {
+    if (!this.enabled || !this.transporter) {
+      logger.debug(`📧 Email skipped (service disabled): ${options.subject}`);
+      return false;
+    }
     try {
       const mailOptions = {
         from: `"${process.env.EMAIL_FROM_NAME || 'TechFlow'}" <${process.env.EMAIL_USER}>`,

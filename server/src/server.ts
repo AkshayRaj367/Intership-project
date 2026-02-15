@@ -1,7 +1,10 @@
 import dotenv from 'dotenv';
+import { createServer } from 'http';
 import App from './app';
-import { logger } from '@/utils/logger';
-import { disconnectDatabase } from '@/config/database';
+import { logger } from './utils/logger';
+import { disconnectDatabase } from './config/database';
+import { initializeSocket } from './config/socket';
+import { initializeChangeStreams, closeChangeStreams } from './services/changeStream.service';
 
 // Load environment variables
 dotenv.config();
@@ -16,16 +19,24 @@ const startServer = async (): Promise<void> => {
     await app.initialize();
 
     const PORT = process.env.PORT || 5000;
-    const server = app.app.listen(PORT, () => {
+    
+    // Create HTTP server and attach Socket.IO
+    const httpServer = createServer(app.app);
+    const io = initializeSocket(httpServer);
+    
+    // Initialize MongoDB Change Streams for real-time updates
+    initializeChangeStreams();
+
+    httpServer.listen(PORT, () => {
       logger.info(`🚀 Server is running on port ${PORT}`);
       logger.info(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
       logger.info(`🔗 API Base URL: http://localhost:${PORT}/api`);
       logger.info(`🏥 Health Check: http://localhost:${PORT}/api/health`);
-      logger.info(`📚 API Documentation: http://localhost:${PORT}/api`);
+      logger.info(`🔌 Socket.IO: ws://localhost:${PORT}`);
     });
 
     // Handle server errors
-    server.on('error', (error: any) => {
+    httpServer.on('error', (error: any) => {
       if (error.syscall !== 'listen') {
         throw error;
       }
@@ -50,7 +61,10 @@ const startServer = async (): Promise<void> => {
     const gracefulShutdown = async (signal: string) => {
       logger.info(`🔄 ${signal} received, shutting down gracefully...`);
       
-      server.close(async () => {
+      // Close change streams first
+      closeChangeStreams();
+
+      httpServer.close(async () => {
         logger.info('✅ HTTP server closed');
         
         try {

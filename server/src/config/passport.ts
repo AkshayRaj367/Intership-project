@@ -5,17 +5,22 @@ import { User } from '@/models/User.model';
 import { IGoogleProfile, IJWTPayload } from '@/types';
 import { logger } from '@/utils/logger';
 
-// Google OAuth Strategy
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL!,
-      scope: ['profile', 'email'],
-      passReqToCallback: true,
-    },
-    async (req: any, accessToken: any, refreshToken: any, params: any, profile: any, done: any) => {
+// Google OAuth Strategy — only initialize if credentials are configured
+const googleClientID = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const googleCallbackURL = process.env.GOOGLE_CALLBACK_URL;
+
+if (googleClientID && googleClientSecret && googleCallbackURL) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: googleClientID,
+        clientSecret: googleClientSecret,
+        callbackURL: googleCallbackURL,
+        scope: ['profile', 'email'],
+        passReqToCallback: true,
+      },
+      async (req: any, accessToken: any, refreshToken: any, params: any, profile: any, done: any) => {
       try {
         logger.info(`Google OAuth attempt for email: ${profile.emails?.[0]?.value}`);
 
@@ -55,6 +60,9 @@ passport.use(
     }
   )
 );
+} else {
+  logger.warn('⚠️ Google OAuth not configured — missing GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, or GOOGLE_CALLBACK_URL');
+}
 
 // JWT Strategy for API authentication
 passport.use(

@@ -38,35 +38,44 @@ const format = winston.format.combine(
   ),
 );
 
-// Define transports
-const transports = [
-  // Console transport
+// Define transports — only use file transports when not in a serverless environment
+const transports: winston.transport[] = [
+  // Console transport (always available)
   new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),
       winston.format.simple()
     )
   }),
-  
-  // File transport for errors
-  new winston.transports.File({
-    filename: path.join(process.cwd(), 'logs', 'error.log'),
-    level: 'error',
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
-    )
-  }),
-  
-  // File transport for all logs
-  new winston.transports.File({
-    filename: path.join(process.cwd(), 'logs', 'combined.log'),
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
-    )
-  }),
 ];
+
+// Add file transports only in non-serverless environments (Vercel has read-only filesystem)
+if (!process.env.VERCEL) {
+  // Create logs directory if it doesn't exist
+  const fs = require('fs');
+  const logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
+
+  transports.push(
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'error.log'),
+      level: 'error',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      )
+    }),
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'combined.log'),
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      )
+    })
+  );
+}
 
 // Create the logger
 export const logger = winston.createLogger({
@@ -76,13 +85,6 @@ export const logger = winston.createLogger({
   transports,
   exitOnError: false,
 });
-
-// Create logs directory if it doesn't exist
-import fs from 'fs';
-const logsDir = path.join(process.cwd(), 'logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
-}
 
 // Export a stream object for Morgan HTTP logging
 export const morganStream = {

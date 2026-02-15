@@ -14,12 +14,28 @@ export const connectDatabase = async (): Promise<void> => {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
       bufferCommands: false,
-      bufferMaxEntries: 0,
     };
 
     const conn = await mongoose.connect(mongoUri, options);
 
     logger.info(`✅ MongoDB Connected: ${conn.connection.host}`);
+
+    // Clean up stale indexes that don't match the current schema
+    try {
+      const usersCollection = conn.connection.collection('users');
+      const indexes = await usersCollection.indexes();
+      const staleIndexes = indexes.filter((idx: any) =>
+        idx.name !== '_id_' && idx.key && ('username' in idx.key)
+      );
+      for (const idx of staleIndexes) {
+        if (idx.name) {
+          logger.info(`Dropping stale index: ${idx.name}`);
+          await usersCollection.dropIndex(idx.name);
+        }
+      }
+    } catch (indexError) {
+      logger.warn('Could not clean stale indexes:', indexError);
+    }
     
     // Handle connection events
     mongoose.connection.on('error', (error) => {
@@ -36,7 +52,7 @@ export const connectDatabase = async (): Promise<void> => {
 
   } catch (error) {
     logger.error('❌ Failed to connect to MongoDB:', error);
-    process.exit(1);
+    throw error;
   }
 };
 
@@ -49,15 +65,17 @@ export const disconnectDatabase = async (): Promise<void> => {
   }
 };
 
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-  logger.info('🔄 SIGTERM received, closing MongoDB connection...');
-  await disconnectDatabase();
-  process.exit(0);
-});
+// Graceful shutdown (only in non-serverless environments)
+if (process.env.VERCEL !== '1') {
+  process.on('SIGTERM', async () => {
+    logger.info('🔄 SIGTERM received, closing MongoDB connection...');
+    await disconnectDatabase();
+    process.exit(0);
+  });
 
-process.on('SIGINT', async () => {
-  logger.info('🔄 SIGINT received, closing MongoDB connection...');
-  await disconnectDatabase();
-  process.exit(0);
-});
+  process.on('SIGINT', async () => {
+    logger.info('🔄 SIGINT received, closing MongoDB connection...');
+    await disconnectDatabase();
+    process.exit(0);
+  });
+}

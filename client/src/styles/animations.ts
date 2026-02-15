@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion';
-
 // Google Material Design inspired animations
 export const googleAnimations = {
   // Page transitions

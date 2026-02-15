@@ -1,21 +1,21 @@
 import { Router } from 'express';
 import { ContactController } from '@/controllers/contact.controller';
-import { authenticate, authorize } from '@/middlewares/auth.middleware';
+import { authenticate, optionalAuth } from '@/middlewares/auth.middleware';
 import { validate, schemas } from '@/middlewares/validation.middleware';
-import { authRateLimiter } from '@/middlewares/security.middleware';
+import { contactRateLimiter } from '@/middlewares/security.middleware';
 
 const router = Router();
 
-// Public routes
+// Public routes (optionalAuth links contact to user if logged in)
 router.post('/', 
   contactRateLimiter,
+  optionalAuth as any,
   validate(schemas.contactForm),
   ContactController.submitContact
 );
 
-// Protected admin routes
-router.use(authenticate);
-router.use(authorize('admin'));
+// Protected routes (any authenticated user)
+router.use(authenticate as any);
 
 // Get all contacts with pagination and filtering
 router.get('/',

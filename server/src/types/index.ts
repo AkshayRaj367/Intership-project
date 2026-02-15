@@ -3,14 +3,17 @@ import { Document } from 'mongoose';
 
 // User Types
 export interface IUser extends Document {
-  googleId: string;
+  googleId?: string;
   email: string;
+  password?: string;
   name: string;
   avatar?: string;
   role: 'user' | 'admin';
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+  toSafeObject(): any;
 }
 
 // Contact Message Types

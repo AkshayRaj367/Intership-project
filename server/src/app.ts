@@ -1,14 +1,13 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import passport from 'passport';
-import * as session from 'express-session';
+import session from 'express-session';
 import mongoose from 'mongoose';
 
 import { connectDatabase } from './config/database';
-import { securityMiddleware, requestLogger, corsConfig } from './middlewares/security.middleware';
+import { securityMiddleware, requestLogger } from './middlewares/security.middleware';
 import { logger, morganStream } from './utils/logger';
 import { IHealthCheck } from './types';
 
@@ -33,11 +32,8 @@ class App {
     // Request logging
     this.app.use(morgan('combined', { stream: morganStream }));
 
-    // Security middleware
+    // Security middleware (includes cors, helmet, rate limiting, etc.)
     this.app.use(securityMiddleware);
-
-    // CORS configuration
-    this.app.use(cors(corsConfig));
 
     // Body parsing middleware
     this.app.use(express.json({ limit: '10mb' }));
@@ -47,7 +43,7 @@ class App {
     this.app.use(cookieParser());
 
     // Session configuration for Passport
-    this.app.use((session as any)({
+    this.app.use(session({
       secret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
       resave: false,
       saveUninitialized: false,
@@ -186,12 +182,15 @@ class App {
     try {
       // Connect to database
       await connectDatabase();
+
+      // Initialize passport strategies (Google OAuth + JWT)
+      await import('./config/passport');
       
       logger.info('🚀 Application initialized successfully');
       
     } catch (error) {
       logger.error('❌ Failed to initialize application:', error);
-      process.exit(1);
+      throw error;
     }
   }
 }

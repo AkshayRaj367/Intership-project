@@ -1,11 +1,24 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Github, Linkedin, Twitter, Mail, Heart } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const Footer: React.FC = () => {
+  const navigate = useNavigate()
+
+  const scrollToSection = (sectionId: string) => {
+    if (window.location.pathname !== '/') {
+      navigate('/')
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
+      }, 300)
+    } else {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
   const footerLinks = {
     product: [
-      { label: 'Features', href: '#features' },
+      { label: 'Features', href: '#features', isSection: true },
       { label: 'Pricing', href: '#' },
       { label: 'Documentation', href: '#' },
       { label: 'API Reference', href: '#' },
@@ -104,16 +117,27 @@ const Footer: React.FC = () => {
                   {category}
                 </h3>
                 <ul className="space-y-2">
-                  {links.map((link, linkIndex) => (
+                  {links.map((link: any, linkIndex: number) => (
                     <li key={link.label}>
-                      <motion.a
-                        href={link.href}
-                        className="text-[#9aa0a6] hover:text-white transition-colors duration-200"
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {link.label}
-                      </motion.a>
+                      {link.isSection ? (
+                        <motion.button
+                          onClick={() => scrollToSection(link.href.replace('#', ''))}
+                          className="text-[#9aa0a6] hover:text-white transition-colors duration-200 cursor-pointer"
+                          whileHover={{ x: 4 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {link.label}
+                        </motion.button>
+                      ) : (
+                        <motion.a
+                          href={link.href}
+                          className="text-[#9aa0a6] hover:text-white transition-colors duration-200"
+                          whileHover={{ x: 4 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {link.label}
+                        </motion.a>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -132,7 +156,7 @@ const Footer: React.FC = () => {
             viewport={{ once: true }}
           >
             <div className="flex items-center space-x-2 text-[#9aa0a6]">
-              <span>© 2024 TechFlow.</span>
+              <span>© {new Date().getFullYear()} TechFlow.</span>
               <span>All rights reserved.</span>
             </div>
             

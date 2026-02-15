@@ -6,6 +6,7 @@ interface AuthContextType extends AuthState {
   login: () => void
   logout: () => void
   checkAuth: () => Promise<void>
+  loginWithToken: (token: string) => Promise<void>
 }
 
 type AuthAction =
@@ -59,13 +60,15 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(authReducer, initialState)
+  const [state, dispatch] = useReducer(authReducer, { ...initialState, loading: true })
 
   // Check authentication on mount
   useEffect(() => {
     const token = localStorage.getItem('auth_token')
     if (token) {
       checkAuth()
+    } else {
+      dispatch({ type: 'CHECK_AUTH_FAILURE' })
     }
   }, [])
 
@@ -77,12 +80,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       await authApi.logout()
-      dispatch({ type: 'LOGOUT' })
-      localStorage.removeItem('auth_token')
-      window.location.href = '/'
     } catch (error) {
-      console.error('Logout failed:', error)
+      console.error('Logout API call failed:', error)
     }
+    dispatch({ type: 'LOGOUT' })
+    localStorage.removeItem('auth_token')
+    window.location.href = '/'
   }
 
   const checkAuth = async () => {
@@ -93,32 +96,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         dispatch({ type: 'CHECK_AUTH_SUCCESS', payload: response.data })
       } else {
         dispatch({ type: 'CHECK_AUTH_FAILURE' })
+        localStorage.removeItem('auth_token')
       }
     } catch (error) {
-      // For demo purposes, if API fails but token exists, create demo user
-      const token = localStorage.getItem('auth_token')
-      if (token) {
-        const demoUser: AuthUser = {
-          _id: 'demo-user-123',
-          email: 'demo@example.com',
-          name: 'Demo User',
-          avatar: '',
-          role: 'user',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-        dispatch({ type: 'CHECK_AUTH_SUCCESS', payload: demoUser })
-      } else {
-        dispatch({ type: 'CHECK_AUTH_FAILURE' })
-      }
+      dispatch({ type: 'CHECK_AUTH_FAILURE' })
+      localStorage.removeItem('auth_token')
     }
+  }
+
+  const loginWithToken = async (token: string) => {
+    localStorage.setItem('auth_token', token)
+    await checkAuth()
   }
 
   const value: AuthContextType = {
     ...state,
     login,
     logout,
-    checkAuth
+    checkAuth,
+    loginWithToken
   }
 
   return (

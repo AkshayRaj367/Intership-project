@@ -1,88 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/contexts/AuthContext'
-import { User, Mail, Phone, MessageSquare, TrendingUp, Calendar, Download, Search, Filter } from 'lucide-react'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
+import { User, Mail, Phone, MessageSquare, TrendingUp, Calendar, Download, Search, Filter, Wifi, WifiOff } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { contactApi } from '@/lib/api'
-import { Contact, ApiResponse } from '@/types'
+import { Contact } from '@/types'
 import { toast } from 'sonner'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { useContacts } from '@/hooks/useContacts'
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuthStore()
-  const [contacts, setContacts] = useState<Contact[]>([])
-  const [stats, setStats] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const { 
+    contacts, 
+    stats, 
+    loading, 
+    isConnected, 
+    updateStatus: handleStatusUpdate,
+    exportContacts: handleExport,
+  } = useContacts()
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
-
-  useEffect(() => {
-    fetchDashboardData()
-  }, [])
-
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true)
-      
-      // Fetch contacts and stats in parallel
-      const [contactsResponse, statsResponse] = await Promise.all([
-        contactApi.getAll(),
-        contactApi.getStats()
-      ])
-
-      if (contactsResponse.success && contactsResponse.data) {
-        setContacts(contactsResponse.data)
-      }
-
-      if (statsResponse.success && statsResponse.data) {
-        setStats(statsResponse.data)
-      }
-    } catch (error) {
-      toast.error('Failed to load dashboard data')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleStatusUpdate = async (contactId: string, newStatus: string) => {
-    try {
-      const response = await contactApi.updateStatus(contactId, newStatus)
-      if (response.success) {
-        // Update local state
-        setContacts(prev => 
-          prev.map(contact => 
-            contact._id === contactId 
-              ? { ...contact, status: newStatus as any }
-              : contact
-          )
-        )
-        toast.success('Status updated successfully')
-      }
-    } catch (error) {
-      toast.error('Failed to update status')
-    }
-  }
-
-  const handleExport = async () => {
-    try {
-      const blob = await contactApi.export()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `contacts-${new Date().toISOString().split('T')[0]}.csv`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
-      toast.success('Contacts exported successfully')
-    } catch (error) {
-      toast.error('Failed to export contacts')
-    }
-  }
 
   const filteredContacts = contacts.filter(contact => {
     const matchesSearch = contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -111,9 +50,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa]">
-      <Navbar />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
         <motion.div
           className="mb-8"
@@ -121,17 +58,26 @@ const Dashboard: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-[#202124]">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#202124]">
                 Welcome back, {user?.name}!
               </h1>
-              <p className="text-[#5f6368] mt-1">
+              <p className="text-sm sm:text-base text-[#5f6368] mt-1">
                 Manage your contacts and track your business growth
               </p>
             </div>
             
-            <div className="mt-4 sm:mt-0 flex space-x-3">
+            <div className="flex gap-2 items-center flex-wrap">
+              {/* Real-time connection indicator */}
+              <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                isConnected 
+                  ? 'bg-[#e6f4ea] text-[#34a853]' 
+                  : 'bg-[#fce8e6] text-[#ea4335]'
+              }`}>
+                {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+                {isConnected ? 'Live' : 'Offline'}
+              </div>
               <Button
                 variant="outline"
                 onClick={handleExport}
@@ -147,7 +93,7 @@ const Dashboard: React.FC = () => {
         {/* Stats Grid */}
         {stats && (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -229,7 +175,7 @@ const Dashboard: React.FC = () => {
                     <Input
                       placeholder="Search contacts..."
                       value={searchTerm}
-                      onChange={setSearchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
                     />
                   </div>
@@ -248,29 +194,29 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="overflow-x-auto -mx-6 px-6">
+                <table className="w-full min-w-[640px]">
                   <thead>
-                    <tr className="border-b border-[#dadce0]">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-[#5f6368]">Name</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-[#5f6368]">Email</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-[#5f6368]">Subject</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-[#5f6368]">Status</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-[#5f6368]">Date</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-[#5f6368]">Actions</th>
+                    <tr className="border-b border-[#e8eaed]">
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-[#5f6368] uppercase tracking-wider">Name</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-[#5f6368] uppercase tracking-wider">Email</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-[#5f6368] uppercase tracking-wider">Subject</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-[#5f6368] uppercase tracking-wider">Status</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-[#5f6368] uppercase tracking-wider">Date</th>
+                      <th className="text-left py-3 px-4 text-xs font-semibold text-[#5f6368] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredContacts.map((contact) => (
-                      <tr key={contact._id} className="border-b border-[#dadce0] hover:bg-[#f8f9fa]">
+                      <tr key={contact._id} className="border-b border-[#f1f3f4] hover:bg-[#f8f9fa] transition-colors duration-150">
                         <td className="py-3 px-4">
                           <div className="flex items-center">
-                            <div className="w-8 h-8 bg-[#1a73e8] rounded-full flex items-center justify-center mr-3">
-                              <span className="text-white text-sm font-medium">
+                            <div className="w-8 h-8 bg-[#e8f0fe] rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                              <span className="text-[#1a73e8] text-sm font-medium">
                                 {contact.name.charAt(0).toUpperCase()}
                               </span>
                             </div>
-                            <span className="text-[#202124] font-medium">{contact.name}</span>
+                            <span className="text-sm text-[#202124] font-medium truncate">{contact.name}</span>
                           </div>
                         </td>
                         <td className="py-3 px-4">
@@ -319,8 +265,6 @@ const Dashboard: React.FC = () => {
           </Card>
         </motion.div>
       </main>
-
-      <Footer />
     </div>
   )
 }

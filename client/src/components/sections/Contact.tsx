@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Card from '@/components/ui/Card'
 import { contactApi } from '@/lib/api'
+import { ContactFormData } from '@/types'
 import { toast } from 'sonner'
 
 const contactSchema = z.object({
@@ -20,7 +21,7 @@ const contactSchema = z.object({
   message: z.string().min(10, 'Message must be at least 10 characters').max(1000, 'Message cannot exceed 1000 characters'),
 })
 
-type ContactFormData = z.infer<typeof contactSchema>
+type ContactFormInput = z.infer<typeof contactSchema>
 
 const Contact: React.FC = () => {
   const [ref, inView] = useInView({
@@ -36,14 +37,14 @@ const Contact: React.FC = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<ContactFormData>({
+  } = useForm<ContactFormInput>({
     resolver: zodResolver(contactSchema),
   })
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = async (data: ContactFormInput) => {
     setIsSubmitting(true)
     try {
-      await contactApi.submit(data)
+      await contactApi.submit(data as ContactFormData)
       setIsSubmitted(true)
       toast.success('Message sent successfully! We\'ll get back to you soon.')
       reset()
@@ -101,7 +102,7 @@ const Contact: React.FC = () => {
   }
 
   return (
-    <section id="contact" className="py-20 bg-white">
+    <section id="contact" className="py-12 sm:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -112,7 +113,7 @@ const Contact: React.FC = () => {
           transition={{ duration: 0.6 }}
         >
           <motion.h2
-            className="text-4xl font-bold text-[#202124] mb-4"
+            className="text-3xl sm:text-4xl font-bold text-[#202124] mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -122,17 +123,17 @@ const Contact: React.FC = () => {
           </motion.h2>
           
           <motion.p
-            className="text-xl text-[#5f6368] max-w-3xl mx-auto"
+            className="text-lg sm:text-xl text-[#5f6368] max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Have a question? Want to see a demo? We'd love to hear from you. 
-            Send us a message and we'll respond as soon as possible.
+            Have a question or want to try the contact form? Submit a message below 
+            and watch it appear on your dashboard in real time.
           </motion.p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Form */}
           <motion.div
             ref={ref}

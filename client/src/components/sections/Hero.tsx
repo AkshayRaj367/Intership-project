@@ -1,11 +1,12 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Zap, Shield, Rocket } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import { useAuthStore } from '@/contexts/AuthContext'
 
 const Hero: React.FC = () => {
-  const { isAuthenticated, login } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -41,17 +42,18 @@ const Hero: React.FC = () => {
     },
   }
 
+  const navigate = useNavigate()
+
   const handleGetStarted = () => {
     if (!isAuthenticated) {
-      login()
+      navigate('/register')
     } else {
-      // Scroll to contact section or dashboard
-      window.location.href = '/dashboard'
+      navigate('/dashboard')
     }
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-[#f8f9fa] to-[#e8f0fe] overflow-hidden">
+    <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-br from-white via-[#f8f9fa] to-[#e8f0fe] overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -73,7 +75,7 @@ const Hero: React.FC = () => {
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20"
+        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -89,25 +91,26 @@ const Hero: React.FC = () => {
               variants={itemVariants}
             >
               <Zap className="w-4 h-4 mr-2" />
-              Enterprise-Grade Solution
+              Contact Management Made Simple
             </motion.div>
 
             <motion.h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#202124] mb-6 leading-tight"
+              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#202124] mb-6 leading-tight"
               variants={itemVariants}
             >
-              Build Amazing
-              <span className="text-[#1a73e8]"> Products </span>
+              Manage Your
+              <span className="text-[#1a73e8]"> Contacts </span>
               <br />
-              Faster Than Ever
+              In Real Time
             </motion.h1>
 
             <motion.p
               className="text-lg sm:text-xl text-[#5f6368] mb-8 max-w-2xl"
               variants={itemVariants}
             >
-              Transform your ideas into reality with our powerful, scalable, and secure platform. 
-              Join thousands of teams already building the future with TechFlow.
+              TechFlow helps you collect, organize, and respond to customer inquiries 
+              through a real-time dashboard. Track every contact, monitor your response 
+              rate, and never miss a message.
             </motion.p>
 
             <motion.div
@@ -142,22 +145,22 @@ const Hero: React.FC = () => {
             >
               <div className="flex items-center text-[#5f6368]">
                 <Shield className="w-5 h-5 text-[#34a853] mr-2" />
-                <span className="font-medium">Secure by Design</span>
+                <span className="font-medium">Secure Auth</span>
               </div>
               <div className="flex items-center text-[#5f6368]">
                 <Rocket className="w-5 h-5 text-[#1a73e8] mr-2" />
-                <span className="font-medium">Lightning Fast</span>
+                <span className="font-medium">Real-Time Updates</span>
               </div>
               <div className="flex items-center text-[#5f6368]">
                 <Zap className="w-5 h-5 text-[#fbbc05] mr-2" />
-                <span className="font-medium">Easy Integration</span>
+                <span className="font-medium">CSV Export</span>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Right Content - Hero Illustration */}
+          {/* Right Content - Hero Illustration (hidden on mobile) */}
           <motion.div
-            className="relative"
+            className="relative hidden lg:block"
             variants={itemVariants}
           >
             <motion.div
@@ -189,7 +192,7 @@ const Hero: React.FC = () => {
                       <Rocket className="w-12 h-12 text-white" />
                     </motion.div>
                     <h3 className="text-2xl font-bold mb-2">TechFlow</h3>
-                    <p className="text-white/80">Enterprise Platform</p>
+                    <p className="text-white/80">Contact Manager</p>
                   </div>
                 </div>
 
