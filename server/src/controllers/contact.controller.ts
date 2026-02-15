@@ -166,6 +166,77 @@ export class ContactController {
   }
 
   /**
+   * Update contact (full edit)
+   */
+  static async updateContact(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const authReq = req as AuthenticatedRequest;
+      const userId = authReq.user?._id;
+
+      const updateData: any = {};
+      const allowedFields = ['name', 'email', 'subject', 'message', 'status'];
+      for (const field of allowedFields) {
+        if (req.body[field] !== undefined) {
+          updateData[field] = req.body[field];
+        }
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        res.status(400).json({
+          success: false,
+          error: {
+            message: 'No fields to update',
+            code: 'NO_UPDATE_FIELDS'
+          }
+        } as IApiResponse);
+        return;
+      }
+
+      const contact = await Contact.findOneAndUpdate(
+        { _id: id, userId },
+        updateData,
+        { new: true }
+      );
+
+      if (!contact) {
+        res.status(404).json({
+          success: false,
+          error: {
+            message: 'Contact not found',
+            code: 'CONTACT_NOT_FOUND'
+          }
+        } as IApiResponse);
+        return;
+      }
+
+      logger.info(`Contact ${id} updated by user ${userId}`);
+
+      emitToUser(userId!.toString(), 'contact:updated', {
+        type: 'updated',
+        contact: contact.toObject(),
+        timestamp: new Date().toISOString()
+      });
+
+      res.status(200).json({
+        success: true,
+        data: contact,
+        message: 'Contact updated successfully'
+      } as IApiResponse);
+
+    } catch (error) {
+      logger.error('Error updating contact:', error);
+      res.status(500).json({
+        success: false,
+        error: {
+          message: 'Failed to update contact',
+          code: 'CONTACT_UPDATE_ERROR'
+        }
+      } as IApiResponse);
+    }
+  }
+
+  /**
    * Update contact status
    */
   static async updateContactStatus(req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -22,6 +22,7 @@ interface UseContactsReturn {
   isConnected: boolean
   refetch: () => Promise<void>
   updateStatus: (contactId: string, newStatus: string) => Promise<void>
+  updateContact: (contactId: string, data: Partial<Contact>) => Promise<void>
   deleteContact: (contactId: string) => Promise<void>
   exportContacts: () => Promise<void>
 }
@@ -166,6 +167,23 @@ export const useContacts = (): UseContactsReturn => {
     }
   }, [])
 
+  // Update contact (full edit)
+  const updateContact = useCallback(async (contactId: string, data: Partial<Contact>) => {
+    try {
+      const response = await contactApi.update(contactId, data as any)
+      if (response.success && response.data) {
+        setContacts((prev) =>
+          prev.map((c) =>
+            c._id === contactId ? { ...c, ...response.data } : c
+          )
+        )
+        toast.success('Contact updated successfully')
+      }
+    } catch (err) {
+      toast.error('Failed to update contact')
+    }
+  }, [])
+
   // Delete contact
   const deleteContact = useCallback(async (contactId: string) => {
     try {
@@ -205,6 +223,7 @@ export const useContacts = (): UseContactsReturn => {
     isConnected,
     refetch: fetchData,
     updateStatus,
+    updateContact,
     deleteContact,
     exportContacts,
   }

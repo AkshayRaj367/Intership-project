@@ -217,6 +217,48 @@ export const schemas = {
       .optional()
   }),
 
+  // Contact update validation (full edit)
+  contactUpdate: Joi.object({
+    name: Joi.string()
+      .trim()
+      .min(2)
+      .max(100)
+      .optional()
+      .messages({
+        'string.min': 'Name must be at least 2 characters long',
+        'string.max': 'Name cannot exceed 100 characters'
+      }),
+    email: Joi.string()
+      .trim()
+      .email()
+      .optional()
+      .messages({
+        'string.email': 'Please provide a valid email address'
+      }),
+    subject: Joi.string()
+      .trim()
+      .valid('general', 'demo', 'support', 'partnership')
+      .optional()
+      .messages({
+        'any.only': 'Subject must be one of: general, demo, support, partnership'
+      }),
+    message: Joi.string()
+      .trim()
+      .min(10)
+      .max(1000)
+      .optional()
+      .messages({
+        'string.min': 'Message must be at least 10 characters long',
+        'string.max': 'Message cannot exceed 1000 characters'
+      }),
+    status: Joi.string()
+      .valid('new', 'read', 'replied', 'archived')
+      .optional()
+      .messages({
+        'any.only': 'Status must be one of: new, read, replied, archived'
+      })
+  }),
+
   // Contact status update validation
   contactStatusUpdate: Joi.object({
     status: Joi.string()

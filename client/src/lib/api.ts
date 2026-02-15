@@ -88,6 +88,14 @@ export const contactApi = {
     return response.data
   },
 
+  update: async (
+    id: string,
+    data: Partial<ContactFormData & { status?: string }>
+  ): Promise<ApiResponse<Contact>> => {
+    const response = await api.put(`/contact/${id}`, data)
+    return response.data
+  },
+
   delete: async (id: string): Promise<ApiResponse> => {
     const response = await api.delete(`/contact/${id}`)
     return response.data

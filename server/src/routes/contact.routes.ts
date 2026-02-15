@@ -39,6 +39,13 @@ router.get('/:id',
   ContactController.getContactById
 );
 
+// Update contact (full edit)
+router.put('/:id',
+  validate(schemas.objectId, 'params'),
+  validate(schemas.contactUpdate),
+  ContactController.updateContact
+);
+
 // Update contact status
 router.patch('/:id/status',
   validate(schemas.objectId, 'params'),
