@@ -179,7 +179,7 @@ const Hero: React.FC = () => {
                 <div className="w-full h-96 bg-gradient-to-br from-[#1a73e8] to-[#4285f4] rounded-3xl shadow-2xl flex items-center justify-center">
                   <div className="text-center text-white p-8">
                     <motion.div
-                      className="flex items-center justify-center mx-auto mb-6"
+                      className="flex items-center justify-center mx-auto mb-6 gap-4"
                       animate={{
                         scale: [1, 1.05, 1],
                       }}
@@ -189,11 +189,23 @@ const Hero: React.FC = () => {
                         ease: 'easeInOut',
                       }}
                     >
-                      <img
-                        src="/techflow-logo.svg"
-                        alt="TechFlow Logo"
-                        className="h-24 w-auto drop-shadow-lg"
-                      />
+                      {/* Inline TechFlow cube logo */}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" className="w-20 h-20 drop-shadow-lg">
+                        <polygon points="256,80 416,168 256,256 96,168" fill="#4285F4"/>
+                        <polygon points="96,168 256,256 256,432 96,344" fill="#FBBC05"/>
+                        <polygon points="416,168 256,256 256,432 416,344" fill="#34A853"/>
+                        <polygon points="256,168 336,212 256,256 176,212" fill="#EA4335"/>
+                        <polygon points="176,212 256,256 256,344 176,300" fill="#EA4335" opacity="0.8"/>
+                        <polygon points="336,212 256,256 256,344 336,300" fill="#4285F4" opacity="0.8"/>
+                        <circle cx="256" cy="80" r="16" fill="#4285F4"/>
+                        <circle cx="96" cy="168" r="16" fill="#FBBC05"/>
+                        <circle cx="416" cy="168" r="16" fill="#34A853"/>
+                        <circle cx="256" cy="432" r="16" fill="#34A853"/>
+                        <circle cx="96" cy="344" r="16" fill="#FBBC05"/>
+                        <circle cx="416" cy="344" r="16" fill="#34A853"/>
+                        <circle cx="256" cy="256" r="16" fill="#EA4335"/>
+                      </svg>
+                      <span className="text-4xl font-semibold text-white tracking-tight">TechFlow</span>
                     </motion.div>
                     <p className="text-white/80 text-lg">Contact Manager</p>
                   </div>
