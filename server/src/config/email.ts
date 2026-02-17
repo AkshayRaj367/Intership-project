@@ -125,7 +125,7 @@ class EmailService {
             
             <div class="footer">
               <p>Best regards,<br>The TechFlow Team</p>
-              <p>📧 hello@techflow.com | 🌐 www.techflow.com</p>
+              <p>📧 Akshay.raj.p.367@gmail.com | 🌐 www.techflow.com</p>
             </div>
           </div>
         </div>

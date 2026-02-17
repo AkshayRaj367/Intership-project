@@ -179,20 +179,23 @@ const Hero: React.FC = () => {
                 <div className="w-full h-96 bg-gradient-to-br from-[#1a73e8] to-[#4285f4] rounded-3xl shadow-2xl flex items-center justify-center">
                   <div className="text-center text-white p-8">
                     <motion.div
-                      className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-6"
+                      className="flex items-center justify-center mx-auto mb-6"
                       animate={{
-                        rotate: [0, 360],
+                        scale: [1, 1.05, 1],
                       }}
                       transition={{
-                        duration: 20,
+                        duration: 3,
                         repeat: Infinity,
-                        ease: 'linear',
+                        ease: 'easeInOut',
                       }}
                     >
-                      <Rocket className="w-12 h-12 text-white" />
+                      <img
+                        src="/techflow-logo.svg"
+                        alt="TechFlow Logo"
+                        className="h-24 w-auto drop-shadow-lg"
+                      />
                     </motion.div>
-                    <h3 className="text-2xl font-bold mb-2">TechFlow</h3>
-                    <p className="text-white/80">Contact Manager</p>
+                    <p className="text-white/80 text-lg">Contact Manager</p>
                   </div>
                 </div>
 
